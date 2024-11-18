@@ -3,11 +3,9 @@
   hosts: servervm1
   become: true
   tasks:
-    # Step 1: Add Docker repository
     - name: Add Docker repository
       command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-    # Step 2: Install Docker packages
     - name: Install Docker packages
       dnf:
         name:
@@ -17,56 +15,32 @@
           - docker-compose-plugin
         state: present
 
-    # Step 3: Start Docker service
     - name: Start Docker service
       systemd:
         name: docker
         state: started
 
-    # Step 4: Enable Docker service
     - name: Enable Docker service
       systemd:
         name: docker
         enabled: true
 
-    # Step 5: Check Docker service status
     - name: Check Docker service status
       command: systemctl status docker
       register: docker_status
       ignore_errors: yes
 
-    # Step 6: Print Docker service status
     - name: Print Docker service status
       debug:
         var: docker_status.stdout_lines
 
-    # Step 7: Install Maven
     - name: Install Maven
       dnf:
         name: maven
         state: present
 
-    # Step 8: Run Maven package (this will create the jar/war file)
     - name: Run Maven package
       command: mvn package
       args:
-        chdir: /home/username/BankingMicroservice1  # Replace with your actual project path
+        chdir: /home/username/BankingMicroservice1/project1  # Replace with your actual project path
       when: ansible_facts.packages['maven'] is defined  # Ensure Maven is installed before running mvn package
-
-    # Step 9: Build Docker image (this step will build the Docker image)
-    - name: Build Docker image
-      docker_image:
-        build:
-          path: /home/username/BankingMicroservice1  # Path where your Dockerfile is located
-        name: banking_microservice  # Replace with your desired image name
-        tag: latest
-
-    # Step 10: Run Docker container (this step will run the Docker container)
-    - name: Run Docker container
-      docker_container:
-        name: banking_microservice_container  # Replace with your desired container name
-        image: banking_microservice:latest  # Reference the Docker image created earlier
-        state: started
-        restart_policy: always  # Automatically restart the container if it stops
-        ports:
-          - "8081:8080"  # Map host port 8081 to container port 8080
