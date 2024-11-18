@@ -1,12 +1,152 @@
+# ---
+# - name: Install Docker on CentOS
+#   hosts: servervm1
+#   become: true
+
+#   tasks:
+#     - name: Add Docker repository
+#       command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+#     - name: Install Docker packages
+#       dnf:
+#         name:
+#           - docker-ce
+#           - docker-ce-cli
+#           - containerd.io
+#           - docker-compose-plugin
+#         state: present
+
+#     - name: Start Docker service
+#       systemd:
+#         name: docker
+#         state: started
+
+#     - name: Enable Docker service
+#       systemd:
+#         name: docker
+#         enabled: true
+
+#     - name: Check Docker service status
+#       systemd:
+#         name: docker
+#         state: started
+#         enabled: true
+#       register: docker_status
+#       ignore_errors: yes
+
+#     - name: Print Docker service status
+#       debug:
+#         var: docker_status
+    
+
+    
+# ---
+# - name: Install Docker on CentOS
+#   hosts: servervm1
+#   become: true
+
+#   tasks:
+#     - name: Add Docker repository
+#       command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+#     - name: Install Docker packages
+#       dnf:
+#         name:
+#           - docker-ce
+#           - docker-ce-cli
+#           - containerd.io
+#           - docker-compose-plugin
+#         state: present
+
+#     - name: Start Docker service
+#       systemd:
+#         name: docker
+#         state: started
+
+#     - name: Enable Docker service
+#       systemd:
+#         name: docker
+#         enabled: true
+
+#     - name: Check Docker service status
+#       systemd:
+#         name: docker
+#         state: started
+#         enabled: true
+#       register: docker_status
+#       ignore_errors: yes
+
+#     - name: Print Docker service status
+#       debug:
+#         var: docker_status
+
+
+# - name: Install Java 17 and Maven
+#   hosts: servervm1  # Modify this as per your environment
+#   become: true  # Ensure this runs with elevated privileges
+
+#   tasks:
+#     # Install Java 17
+#     - name: Install Java 17 (OpenJDK 17)
+#       dnf:
+#         name: java-17-openjdk
+#         state: present
+
+#     # Verify Java installation
+#     - name: Verify Java installation
+#       command: java -version
+#       register: java_version
+#       failed_when: java_version.rc != 0
+
+#     # Print Java version
+#     - name: Print Java version
+#       debug:
+#         var: java_version.stdout
+
+#     # Install Maven
+#     - name: Install Maven
+#       dnf:
+#         name: maven
+#         state: present
+
+#     # Verify Maven installation
+#     - name: Verify Maven installation
+#       command: mvn -v
+#       register: maven_version
+#       failed_when: maven_version.rc != 0
+
+#     # Print Maven version
+#     - name: Print Maven version
+#       debug:
+#         var: maven_version.stdout
+
+#     # Build with Maven (assuming your project is in the specified directory)
+#     - name: Run Maven build
+#       command: mvn clean package
+#       args:
+#         chdir: /path/to/your/project  # Update with your project's path
+
+#     # Verify Maven build success
+#     - name: Verify build success
+#       stat:
+#         path: /path/to/your/project/target/your-artifact-name.jar  # Replace with actual build artifact
+#       register: build_status
+
+#     # Print Maven build result
+#     - name: Print Maven build result
+#       debug:
+#         var: build_status
+
+
+
 ---
 - name: Install Docker on CentOS
   hosts: servervm1
   become: true
-
   tasks:
     - name: Add Docker repository
       command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-
+ 
     - name: Install Docker packages
       dnf:
         name:
@@ -15,25 +155,26 @@
           - containerd.io
           - docker-compose-plugin
         state: present
-
+ 
     - name: Start Docker service
       systemd:
         name: docker
         state: started
-
+ 
     - name: Enable Docker service
       systemd:
         name: docker
         enabled: true
-
+ 
     - name: Check Docker service status
-      systemd:
-        name: docker
-        state: started
-        enabled: true
+      command: systemctl status docker
       register: docker_status
       ignore_errors: yes
-
+ 
     - name: Print Docker service status
       debug:
-        var: docker_status
+        var: docker_status.stdout_lines
+    - name: Install Maven
+      dnf:
+        name: maven
+        state: present
