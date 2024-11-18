@@ -37,4 +37,3 @@
       dnf:
         name: maven
         state: present
-has context menu
