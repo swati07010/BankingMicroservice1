@@ -1,6 +1,6 @@
 ---
 - name: Install Terraform on RHEL-based system
-  hosts: servervm1
+  hosts: servervm
   become: yes
   tasks:
     - name: Install yum-utils
