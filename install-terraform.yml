@@ -1,0 +1,29 @@
+---
+- name: Install Terraform on RHEL-based system
+  hosts: servervm1
+  become: yes
+  tasks:
+    - name: Install yum-utils
+      ansible.builtin.yum:
+        name: yum-utils
+        state: present
+
+    - name: Add HashiCorp repository
+      ansible.builtin.command:
+        cmd: >
+          yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+        creates: /etc/yum.repos.d/hashicorp.repo  # Ensures idempotency by checking if the repo file exists
+
+    - name: Install Terraform
+      ansible.builtin.yum:
+        name: terraform
+        state: present
+
+    - name: Verify Terraform installation
+      ansible.builtin.command:
+        cmd: terraform --version
+      register: terraform_version_output
+
+    - name: Display Terraform version
+      ansible.builtin.debug:
+        msg: "Installed Terraform version: {{ terraform_version_output.stdout }}"
