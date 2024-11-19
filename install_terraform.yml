@@ -27,5 +27,4 @@
     - name: Display Terraform version
       debug:
         msg: "Installed Terraform version: {{ terraform_version_output.stdout }}"
- 
- 
+has context menu
