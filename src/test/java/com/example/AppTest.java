@@ -10,6 +10,6 @@ public class AppTest {
     public void testHello() {
         App app = new App();  // This will now correctly reference App from com.example
         String result = app.hello();
-        assertEquals("Hello, Swati Banking Microservice!", result);
+        assertEquals("Welcome, Swati Banking Microservice!", result);
     }
 }
