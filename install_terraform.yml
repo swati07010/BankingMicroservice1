@@ -4,27 +4,26 @@
   become: yes
   tasks:
     - name: Install yum-utils
-      yum:
+      ansible.builtin.yum:
         name: yum-utils
         state: present
- 
+
     - name: Add HashiCorp repository
-      command: >
-        yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-      args:
+      ansible.builtin.command:
+        cmd: >
+          yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
         creates: /etc/yum.repos.d/hashicorp.repo  # Ensures idempotency by checking if the repo file exists
- 
+
     - name: Install Terraform
-      yum:
+      ansible.builtin.yum:
         name: terraform
         state: present
- 
+
     - name: Verify Terraform installation
-      command: terraform --version
+      ansible.builtin.command:
+        cmd: terraform --version
       register: terraform_version_output
-      ignore_errors: no
- 
+
     - name: Display Terraform version
-      debug:
+      ansible.builtin.debug:
         msg: "Installed Terraform version: {{ terraform_version_output.stdout }}"
-has context menu
