@@ -48,7 +48,7 @@
 
 
 ---
-- name: Install Docker, Maven, and Terraform on CentOS
+- name: Install Docker on CentOS
   hosts: servervm1
   become: true
   tasks:
@@ -94,21 +94,5 @@
         chdir: /home/username/BankingMicroservice1/project1  # Replace with your actual project path
       when: ansible_facts.packages['maven'] is defined  # Ensure Maven is installed before running mvn package
 
-    # Add Terraform installation tasks
-    - name: Add Terraform repository
-      yum:
-        name: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-        state: present
 
-    - name: Install Terraform
-      dnf:
-        name: terraform
-        state: present
 
-    - name: Verify Terraform installation
-      command: terraform --version
-      register: terraform_version
-
-    - name: Print Terraform version
-      debug:
-        var: terraform_version.stdout
