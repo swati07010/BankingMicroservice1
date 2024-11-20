@@ -1,0 +1,15 @@
+subscription_id          = "a6c46565-0203-40d4-9199-78dd615c778e"
+location                 = "Canada Central"
+resource_group_name      = "rg2-S03"
+vnet_name                = "vnet-S03"
+address_space            = ["10.1.0.0/16"]    # Updated address space
+subnet_name              = "subnet-S03"
+subnet_address_prefix    = ["10.1.1.0/24"]    # Updated subnet prefix
+nsg_name                 = "nsg-S03"
+vm_admin_username        = "adminuser"
+vm_admin_password        = "Password@123"
+vm_size                  = "Standard_DS1_v2"
+vm_image_publisher       = "solvedevops1643693563360"
+vm_image_offer           = "rocky-linux-9"
+vm_image_sku             = "plan001"
+vm_image_version         = "latest"
