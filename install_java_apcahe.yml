@@ -1,12 +1,35 @@
+# ---
+# - name: Install Java and Apache on Client
+#   hosts: clientvm1  # The host pattern should match an entry in your inventory
+#   become: yes
+
+#   tasks:
+#     - name: Install Java
+#       yum:
+#         name: java-1.8.0-openjdk
+#         state: present
+
+#     - name: Install Apache HTTPD
+#       yum:
+#         name: httpd
+#         state: present
+
+#     - name: Start Apache service
+#       service:
+#         name: httpd
+#         state: started
+#         enabled: yes
+
+
 ---
-- name: Install Java and Apache on Client
+- name: Install Java 17 and Apache on Client
   hosts: clientvm1  # The host pattern should match an entry in your inventory
   become: yes
 
   tasks:
-    - name: Install Java
+    - name: Install Java 17
       yum:
-        name: java-1.8.0-openjdk
+        name: java-17-openjdk
         state: present
 
     - name: Install Apache HTTPD
