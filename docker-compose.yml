@@ -9,7 +9,7 @@ services:
     networks:
       - banking-network
     volumes:
-      - ./target/BankingMicroservice-1.0-SNAPSHOT.jar:/app/app.jar  # Mount the JAR file into the container
+      - ./target/BankingMicroservice1-1.0-SNAPSHOT.jar:/app/app.jar  # Mount the JAR file into the container
 
 networks:
   banking-network:
