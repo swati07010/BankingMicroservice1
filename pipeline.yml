@@ -1,6 +1,6 @@
 ---
 - name: Install Docker on CentOS
-  hosts: servervm
+  hosts: 10.0.0.4
   become: true
   tasks:
   
