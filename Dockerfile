@@ -9,7 +9,7 @@ WORKDIR /app
  
 # Copy the JAR file into the container
  
-COPY ./target/BankingMicroservice1-1.0-SNAPSHOT.jar /app/app.jar
+COPY ./target/BankingMicroservice-1.0-SNAPSHOT.jar /app/app.jar
  
  
  
