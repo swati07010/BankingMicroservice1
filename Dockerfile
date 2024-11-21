@@ -9,7 +9,8 @@ WORKDIR /app
  
 # Copy the JAR file into the container
  
-COPY target/BankingMicroservice1-1.0-SNAPSHOT.jar /app/app.jar
+COPY ./target/BankingMicroservice1-1.0-SNAPSHOT.jar /app/app.jar
+ 
  
  
 # Expose the application port (adjust if needed)
@@ -20,6 +21,4 @@ EXPOSE 8080
 # Command to run the JAR file
  
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
-
+has context menu
