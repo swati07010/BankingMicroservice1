@@ -1,0 +1,174 @@
+pipeline {
+    agent { label 'java' }
+    stages {
+        stage('clean up'){
+            steps{
+                script{
+                    deleteDir()
+                }
+            }
+        }
+        
+        stage("SCM checkout") {
+            steps {
+                script {
+                    git branch: 'main',
+                        credentialsId: 'localhostnew',
+                        url: 'git@github.com:swati07010/BankingMicroservice1.git'
+                }
+            }
+        }
+
+        stage('Install epel-release and Ansible') {
+            steps {
+                script {
+                    // Install epel-release and Ansible
+                    sh '''
+                    sudo dnf -y update
+                    sudo dnf -y install epel-release
+                    sudo dnf -y install ansible
+                    ansible --version
+                    '''
+                }
+            }
+        }
+
+        stage('Capture IP Address and Edit Inventory File') {
+            steps {
+                script {
+                    // Capture the machine's IP address using 'ip a'
+                    def ipAddress = sh(script: "ip a | grep inet | grep -v inet6 | awk '{print \$2}' | cut -d'/' -f1 | head -n 1", returnStdout: true).trim()
+                    // Define the inventory file path (adjust as necessary)
+                    def inventoryFile = '/etc/ansible/hosts'
+                    // Check if the IP address already exists in the inventory file
+                    def existingIpCheck = sh(script: "grep -q '${ipAddress}' ${inventoryFile} && echo 'found' || echo 'not_found'", returnStdout: true).trim()
+                    if (existingIpCheck == 'not_found') {
+                        // If IP is not found, add it to the inventory file
+                        sh """
+                        echo '[new_group]' | sudo tee -a ${inventoryFile}
+                        echo 'host1 ansible_host=${ipAddress}' | sudo tee -a ${inventoryFile}
+                        """
+                        // Verify the added lines in the inventory file
+                        sh 'cat /etc/ansible/hosts'
+                    } else {
+                        echo "IP address ${ipAddress} already exists in the inventory. Skipping update."
+                    }
+                }
+            }
+        }
+
+        stage('Run Ansible Playbook to install Terraform') {
+            steps {
+                script {
+                    // Run the Ansible playbook to install Terraform
+                    sh 'ansible-playbook install_terraform.yml'
+                }
+            }
+        }
+
+        stage('Terraform init and plan') {
+            steps {
+                script {
+                    dir('ex01') {
+                        sh 'terraform init -force-copy'
+                        sh 'terraform plan'
+                        sh 'terraform apply -auto-approve'
+                    }
+                }
+            }
+        }
+        stage('Approval to proceed to Host 3 SCM Checkout') {
+            steps {
+                script {
+                    // This is the approval step. The pipeline pauses here for manual approval.
+                    input message: 'Do you approve to proceed to Host 3 SCM Checkout?', 
+                          ok: 'Approve', 
+                          cancel: 'Cancel'
+                }
+            }
+        }
+        
+        stage("SCM Checkout") {
+            agent { label 'java1' }
+            steps {
+                git branch: 'main',
+                    credentialsId: 'host3',
+                    url: 'git@github.com:swati07010/BankingMicroservice1.git'
+            }
+        }
+
+        stage("Run Ansible Playbook") {
+            agent { label 'java1' }
+            steps {
+                script {
+                    // Ensure the playbook is run from the correct path
+                    sh 'ansible-playbook pipeline.yml'
+                }
+            }
+        }
+
+        stage("Maven Build") {
+            agent { label 'java1' }
+            steps {
+                script {
+                    // Running Maven build
+                    sh 'mvn clean install'
+                }
+            }
+        }
+        
+        stage("Docker Compose Up") {
+            agent { label 'java1' }
+            steps {
+                script {
+                    // Run docker-compose to start containers in detached mode
+                    sh 'sudo docker compose -f docker-compose.yml up -d'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building...'
+            }
+        }
+
+        stage('Approval') {
+            steps {
+                script {
+                    // Wait for manual approval
+                    input message: 'Do you approve this build?', 
+                          ok: 'Approve'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+            }
+        }
+        
+        stage('Approval1') {
+            steps {
+                script {
+                    // Wait for manual approval
+                    input message: 'Do you approve this build?', 
+                          ok: 'Approve'
+                }
+            }
+        }
+        
+
+        stage('Terraform destroy') {
+            agent { label 'java' }
+            steps {
+                script {
+                    dir('terraform') {
+                        sh 'terraform destroy -auto-approve'
+                    }
+                }
+            }
+        }
+    }
+}
