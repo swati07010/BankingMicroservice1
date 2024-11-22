@@ -4,6 +4,14 @@ provider "azurerm" {
    tenant_id = "50a9a7aa-6003-4163-a4d1-1915684d7eb6"
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name   = "az-102"
+    storage_account_name  = "storage102"
+    container_name        = "con1"
+    key                   = "terraform.tfstate"  # You can customize the state file name
+  }
+}
 # Resource Group
 resource "azurerm_resource_group" "rg2" {
   name     = var.resource_group_name
